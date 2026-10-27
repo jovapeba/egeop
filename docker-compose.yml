@@ -51,7 +51,7 @@ services:
       redis:
         condition: service_healthy
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgresql://nationforge:nationforge@postgres:5432/nationforge?schema=public}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-nationforge}:${POSTGRES_PASSWORD:-nationforge}@postgres:5432/${POSTGRES_DB:-nationforge}?schema=public}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
       PORT: 3001
