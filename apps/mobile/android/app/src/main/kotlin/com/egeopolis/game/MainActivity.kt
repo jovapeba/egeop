@@ -1,4 +1,4 @@
-package dev.nationforge.nationforge_mobile
+package com.egeopolis.game
 
 import io.flutter.embedding.android.FlutterActivity
 

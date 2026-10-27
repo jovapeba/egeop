@@ -5,9 +5,9 @@ plugins {
 }
 
 android {
-    namespace = "dev.nationforge.nationforge_mobile"
+    namespace = "com.egeopolis.game"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "28.2.13676358"
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -15,8 +15,8 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "dev.nationforge.nationforge_mobile"
+        // Unique Application ID for Google Play
+        applicationId = "com.egeopolis.game"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -35,14 +35,12 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
             ndk {
-                debugSymbolLevel = "none"
             }
         }
     }
 
     packaging {
         jniLibs {
-            keepDebugSymbols.add("**/*.so")
         }
     }
 }
