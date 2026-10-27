@@ -1,0 +1,35 @@
+{
+  "name": "@egeopolis/web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "build:e2e": "NEXT_PUBLIC_API_URL=http://localhost:3011 NEXT_DIST_DIR=.next-e2e next build",
+    "start:e2e": "NEXT_DIST_DIR=.next-e2e next start -p 3100",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@egeopolis/game-core": "*",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.436.0",
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "socket.io-client": "^4.7.5",
+    "tailwind-merge": "^2.5.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^20.14.15",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.4"
+  }
+}

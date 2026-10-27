@@ -1,0 +1,11 @@
+{
+  "rootDir": ".",
+  "testMatch": ["**/*.e2e-spec.ts"],
+  "transform": {
+    "^.+\\.ts$": ["ts-jest", { "tsconfig": "<rootDir>/tsconfig.json" }]
+  },
+  "globalSetup": "<rootDir>/e2e/global-setup.cjs",
+  "globalTeardown": "<rootDir>/e2e/global-teardown.cjs",
+  "testTimeout": 60000,
+  "verbose": true
+}

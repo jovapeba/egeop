@@ -1,0 +1,29 @@
+# keep build context lean — everything builds inside the image
+node_modules
+**/node_modules
+**/.next
+**/.next-e2e
+**/dist
+**/dist-seed
+**/tsconfig.tsbuildinfo
+**/.turbo
+
+# test artifacts
+apps/web/test-results
+apps/web/playwright-report
+apps/web/e2e/.state
+
+# local env / secrets — compose injects env at runtime instead
+.env
+**/.env*
+
+# vcs & docs & scratch
+.git
+.gitignore
+README.md
+plan.md
+OPENCODE_PROMPT.md
+AGENTS.md
+LICENSE
+tools
+world.svg

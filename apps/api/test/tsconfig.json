@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["jest", "node"],
+    "rootDir": "..",
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": ["e2e/**/*.ts"]
+}

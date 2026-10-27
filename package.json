@@ -1,0 +1,33 @@
+{
+  "name": "egeopolis",
+  "version": "1.0.0",
+  "private": true,
+  "description": "eGeopolis \u2014 open-source MMO social-strategy browser game inspired by e-Sim (e-sim.org)",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "infra:up": "docker compose up -d postgres redis",
+    "infra:down": "docker compose down",
+    "db:migrate": "npm run db:migrate -w apps/api",
+    "db:deploy": "npm run db:deploy -w apps/api",
+    "db:seed": "npm run db:seed -w apps/api",
+    "db:studio": "npm run db:studio -w apps/api",
+    "dev:api": "npm run start:dev -w apps/api",
+    "dev:web": "npm run dev -w apps/web",
+    "build:core": "npm run build -w packages/game-core",
+    "build:api": "npm run build -w apps/api",
+    "build:web": "npm run build -w apps/web",
+    "typecheck": "npm run typecheck -w packages/game-core && npm run typecheck -w apps/api && npm run typecheck -w apps/web",
+    "test:e2e": "npm run test:e2e -w @egeopolis/api",
+    "test:e2e:web": "npm run test:e2e -w @egeopolis/web",
+    "dev:mobile": "cd apps/mobile && flutter run",
+    "test:mobile": "cd apps/mobile && flutter test",
+    "start": "docker compose up --build"
+  }
+}

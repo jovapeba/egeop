@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.next/
+.next-e2e/
+test-results/
+playwright-report/
+apps/api/test/e2e/.e2e-state.json
+apps/web/e2e/.state/
+*.tsbuildinfo
+.env.local

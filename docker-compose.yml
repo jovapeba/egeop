@@ -1,0 +1,94 @@
+# eGeopolis production deployment: Postgres + Redis + API + Web.
+#
+#   docker compose up -d --build          # start everything
+#   docker compose logs -f api            # watch migrations/seed boot
+#
+# Host ports are overridable via env (API_PORT, WEB_PORT, POSTGRES_PORT,
+# REDIS_PORT). Container ports stay fixed (api:3001, web:3000). The web image
+# bakes NEXT_PUBLIC_API_URL / NEXT_PUBLIC_WS_URL at build time — pass them as
+# build args or shell env before `--build` when deploying behind a real domain:
+#
+#   NEXT_PUBLIC_API_URL=https://api.example.com NEXT_PUBLIC_WS_URL=https://api.example.com \
+#   WEB_ORIGIN=https://app.example.com docker compose up -d --build
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-nationforge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nationforge}
+      POSTGRES_DB: ${POSTGRES_DB:-nationforge}
+    ports:
+      - "${POSTGRES_PORT:-5434}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-nationforge}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://nationforge:nationforge@postgres:5432/nationforge?schema=public}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
+      PORT: 3001
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      SEED_ON_BOOT: ${SEED_ON_BOOT:-true}
+    ports:
+      - "${API_PORT:-3001}:3001"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/auth/countries').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+        NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-http://localhost:3001}
+        API_INTERNAL_URL: http://api:3001
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      # baked at build time (see Dockerfile) — runtime copy kept for clarity
+      API_INTERNAL_URL: http://api:3001
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+volumes:
+  pgdata:
